@@ -9,7 +9,7 @@ from datetime import date
 class Users(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
-    usernmae = Column(String)
+    username = Column(String)
     email = Column(String)
     password = Column(String)
     userQuest = relationship("Questions", back_populates="fk_user")

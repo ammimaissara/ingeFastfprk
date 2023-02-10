@@ -11,7 +11,7 @@ from package.database import engine, SessionLocal
 
 models.Base.metadata.create_all(engine)
 
-#uvicorn --host 192.168.1.2 main:app
+#uvicorn --host 192.168.1.2 --port 8007 main:app --reload
 
 app = FastAPI()
 
@@ -42,6 +42,8 @@ def all(db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="no user created yet")
     return user
+
+
 
 
 
@@ -84,6 +86,15 @@ def create(request: schemas.Replies, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new)
     return new
+
+
+@app.get("/replies/question/{id}", status_code=status.HTTP_200_OK)
+def show(id, db: Session = Depends(get_db)):
+    reply = db.query(models.Replies).filter(models.Replies.question == id).all()
+    if not reply:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"no reply with this question {id}")
+    return reply
 
 
 @app.get("/replies/", status_code=status.HTTP_200_OK)
